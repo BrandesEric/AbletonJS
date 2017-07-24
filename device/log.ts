@@ -1,4 +1,4 @@
-function log() {
+function log(...any) {
   for(var i=0,len=arguments.length; i<len; i++) {
     var message = arguments[i];
     if(message && message.toString) {
