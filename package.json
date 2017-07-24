@@ -1,0 +1,19 @@
+{
+  "name": "musicwithjs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm-run-all --parallel device sdk",
+    "device": "cd device && tsc --watch",
+    "sdk": "nodemon"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^1.11.0",
+    "npm-run-all": "^4.0.2",
+    "ts-node": "^3.2.1",
+    "typescript": "^2.4.2"
+  }
+}

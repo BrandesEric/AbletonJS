@@ -1,0 +1,6 @@
+{
+  "watch": ["sdk"],
+  "ext": "ts",
+  "ignore": [],
+  "exec": "ts-node ./sdk/index.ts"
+}
