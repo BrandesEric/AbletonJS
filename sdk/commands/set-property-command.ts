@@ -1,7 +1,8 @@
 import * as uuid from "uuid";
 var osc = require("osc-min");
 
-import { AbletonCommand, CommandType } from "./ableton-command";
+import { AbletonCommand } from "./ableton-command";
+import { CommandType } from "./command-type";
 
 export class SetPropertyCommand implements AbletonCommand {
     
@@ -25,13 +26,7 @@ export class SetPropertyCommand implements AbletonCommand {
     toBuffer(): Buffer {
         return osc.toBuffer({
             address: 'ableton-js',
-            args: JSON.stringify({
-                path: this.path,
-                id: this.id,
-                action: <string>this.commandType,
-                property: this.property,
-                value: this.value
-            })
+            args: JSON.stringify(this)
         })
     }
 
