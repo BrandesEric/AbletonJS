@@ -2,5 +2,5 @@
   "watch": ["sdk"],
   "ext": "ts",
   "ignore": [],
-  "exec": "ts-node ./sdk/index.ts"
+  "exec": "cd sdk && ts-node index.ts"
 }

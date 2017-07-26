@@ -1,14 +1,15 @@
 import * as udp from "dgram";
-import { CommandSender } from "./command-sender";
-import { AbletonCommand, CommandType } from "./ableton-command";
+import { AbletonCommand, CommandType } from "./commands/ableton-command";
+import { SetPropertyCommand } from "./commands/set-property-command";
+import { Command } from "./command-bus";
 var port = 9000;
 
-var sender = new CommandSender(port);
+console.log("here i am");
 
 
 function setBpm(bpm: number) {
-    var command = AbletonCommand.makeSetter("live_set", "tempo", bpm);
-    sender.sendCommand(command);
+    var command = new SetPropertyCommand("live_set", "tempo", bpm);
+    Command.sendCommand(command);
 }
 
 setInterval(() =>setBpm(180), 2000);

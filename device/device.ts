@@ -1,12 +1,8 @@
 
 function processMessage(path, payload) {
-    var command = new LiveAPICommand(payload);
-    log(command);
-    switch(command.action){
-        case CommandType.Set:
-            setProperty(command);
-            break;
-    }
+    var commandTypeString = JSON.parse(payload);
+    var commandType = CommandType[commandTypeString];
+    log(commandType);
 }
 
 function setProperty(command: LiveAPICommand){
