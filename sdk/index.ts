@@ -3,19 +3,19 @@ import { AbletonCommand } from "./commands/ableton-command";
 import { SetPropertyCommand } from "./commands/set-property-command";
 import { Command } from "./command-bus";
 import { AbletonResult } from "./results/ableton-result";
+import { SetPropertyResult } from "./results/set-property-result";
+import * as API from "./api";
 var port = 9000;
 
 console.log("here i am");
 
 var i = 120;
-function setBpm(bpm: number): Promise<AbletonResult> {
-    var command = new SetPropertyCommand("live_set", "tempo", bpm);
-    return Command.sendCommand(command);
-}
 
 setInterval(async () => {
-    var result = await setBpm(i++);
-    console.log(result);
+    await API.setBpm(i++);
+    var result = await API.getBpm();
+    console.log(result, i);
+    
 }, 2000);
 
 

@@ -3,6 +3,7 @@ import { AbletonCommand } from "./commands/ableton-command";
 import { CommandType } from "./commands/command-type";
 import { AbletonResult } from "./results/ableton-result";
 import { SetPropertyResult } from "./results/set-property-result";
+import { GetPropertyResult } from "./results/get-property-result";
 
 var osc = require("osc-min");
 const RESPONSE_ADDRESS = "ableton-js-response";
@@ -40,8 +41,11 @@ class CommandBus {
         var commandType = <CommandType>CommandType[response.commandType];
         var result: AbletonResult;
         switch(commandType) {
+            case CommandType.Get:
+                result = new GetPropertyResult(response.id, response.propertyValue);
+                break;
             case CommandType.Set:
-            default: 
+            default:
                 result = new SetPropertyResult(response.id);
                 break;
         }
