@@ -22,6 +22,7 @@ function log() {
     post("\n");
 }
 autowatch = 1;
+var RESPONSE_ADDRESS = "ableton-js-response";
 function processMessage(path, payload) {
     if (path !== "ableton-js") {
         post("Bailing out since we found a non-ableton-js message");
@@ -39,4 +40,9 @@ function setProperty(command) {
     log("setting property");
     var api = new LiveAPI(command.path);
     api.set(command.property, command.value);
+    outlet(0, RESPONSE_ADDRESS, JSON.stringify({
+        ok: true,
+        id: command.id,
+        commandType: command.commandType
+    }));
 }

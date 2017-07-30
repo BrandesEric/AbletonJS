@@ -1,8 +1,11 @@
 import * as udp from "dgram";
-import { AbletonResult } from "./ableton-result";
 import { AbletonCommand } from "./commands/ableton-command";
+import { CommandType } from "./commands/command-type";
+import { AbletonResult } from "./results/ableton-result";
+import { SetPropertyResult } from "./results/set-property-result";
 
 var osc = require("osc-min");
+const RESPONSE_ADDRESS = "ableton-js-response";
 
 class CommandBus {
     port: number;
@@ -29,10 +32,22 @@ class CommandBus {
         });
     }
 
-    receiveMessage(message: Buffer, other: any) {
-        console.log(message);
-        console.log(other);
+    receiveMessage = (message: Buffer, other: any) => {
         var oscMessage = osc.fromBuffer(message);
+        if(oscMessage.address != RESPONSE_ADDRESS){ return; }
+
+        var response = JSON.parse(oscMessage.args[0].value);
+        var commandType = <CommandType>CommandType[response.commandType];
+        var result: AbletonResult;
+        switch(commandType) {
+            case CommandType.Set:
+            default: 
+                result = new SetPropertyResult(response.id);
+                break;
+        }
+        
+        this.promises[response.id](result);
+        delete this.promises[response.id];
     }
 }
 
