@@ -46,7 +46,7 @@ class AbletonCommandBus {
         return this.sendCommand<GetCountResult>(command);
     }
 
-    callFunction(path: string, functionName: string, functionArgs: any[]): Promise<CallFunctionResult> {
+    callFunction(path: string, functionName: string, functionArgs: any[] = []): Promise<CallFunctionResult> {
          var command = new CallFunctionCommand(path, functionName, functionArgs);
         return this.sendCommand<CallFunctionResult>(command);
     }

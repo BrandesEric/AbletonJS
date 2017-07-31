@@ -1,25 +1,36 @@
 // https://docs.cycling74.com/max7/vignettes/jsliveapi
 // https://docs.cycling74.com/max7/vignettes/live_object_model
 // https://docs.cycling74.com/max7/vignettes/jsglobal
-import * as udp from "dgram";
-import { AbletonCommand } from "./commands/ableton-command";
-import { SetPropertyCommand } from "./commands/set-property-command";
-import { AbletonResult } from "./results/ableton-result";
-import { SetPropertyResult } from "./results/set-property-result";
 import * as API from "./api";
-var port = 9000;
+import { Track } from "./models/track";
+import { MidiClip } from "./models/midi-clip";
+import { Note } from "./models/note";
 
-console.log("here i am");
+async function init() {
+    var tracks = await API.getTracks();
+    var trackIndex = tracks.findIndex(x => x.name === "Ableton JS Drums");
+    var track: Track;
+    if(trackIndex >= 0) {
+        track = tracks[trackIndex];
+    }
+    else {
+        track = await API.createMidiTrack("Ableton JS Drums");
+    }
 
-var i = 120;
-
-setInterval(async () => {
-    await API.setBpm(i++);
-    var result = await API.getBpm();
-    console.log(result, i);
-    var trackCount = await API.getTracks();
-    console.log(trackCount);
+    var clip = new MidiClip();
+    clip.lengthInBeats = 8;
+    clip.notes = [];
+    clip.notes.push(new Note(60, 0, 1))
+    clip.notes.push(new Note(61, 1, 1))
+    clip.notes.push(new Note(62, 2, 1))
+    clip.notes.push(new Note(63, 3, 1))
     
-}, 2000);
+    await API.insertMidiClip(track, clip);
+    
+    
 
+
+}
+
+init();
 
