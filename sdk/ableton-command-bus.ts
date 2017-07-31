@@ -14,7 +14,7 @@ import { CallFunctionResult } from "./results/call-function-result";
 var osc = require("osc-min");
 const RESPONSE_ADDRESS = "ableton-js-response";
 
-class CommandBus {
+class AbletonCommandBus {
     port: number;
 
     private sendSocket: udp.Socket;
@@ -87,6 +87,6 @@ class CommandBus {
     }
 }
 
-var sender = new CommandBus(9000, 9001);
+var sender = new AbletonCommandBus(9000, 9001);
 
-export let Command = sender;
+export let Ableton = sender;
