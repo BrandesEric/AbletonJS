@@ -40,6 +40,9 @@ function processMessage(path, payload) {
         case "Count":
             getCount(command);
             break;
+        case "Call":
+            callFunction(command);
+            break;
     }
 }
 function setProperty(command) {
@@ -69,5 +72,17 @@ function getCount(command) {
         id: command.id,
         commandType: command.commandType,
         count: count
+    }));
+}
+function callFunction(command) {
+    var api = new LiveAPI(command.path);
+    var args = [command.functionName];
+    args = args.concat(command.functionArgs);
+    var result = api.call.apply(api, args);
+    outlet(0, RESPONSE_ADDRESS, JSON.stringify({
+        ok: true,
+        id: command.id,
+        commandType: command.commandType,
+        returnValue: result
     }));
 }

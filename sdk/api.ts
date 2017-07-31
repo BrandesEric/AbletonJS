@@ -9,29 +9,46 @@ import { Track } from "./models/track";
 
 
 export async function getBpm(): Promise<number> {
-    var command = new GetPropertyCommand("live_set", "tempo");
-    var result = await Command.sendCommand<GetPropertyResult>(command);
+    var result = await Command.getProperty("live_set", "tempo");
 
     return Promise.resolve(result.propertyValue[0]);
 }
 
 export async function setBpm(bpm: number): Promise<void> {
-    var command = new SetPropertyCommand("live_set", "tempo", bpm);
-    await Command.sendCommand<SetPropertyResult>(command);
+    await Command.setProperty("live_set", "tempo", bpm);
     
     return Promise.resolve();
 }
 
 export async function getTracks(): Promise<Track[]> {
-    var trackCountCommand = new GetCountCommand("live_set", "tracks");
-    var trackCount = await Command.sendCommand<GetCountResult>(trackCountCommand);
+    var trackCount = await Command.getCount("live_set", "tracks");
     var tracks: Track[] = [];
     for(var i = 0; i < trackCount.count; i++) {
-        var trackPath = `live_set tracks ${i}`;
-        var trackName = (await Command.sendCommand<GetPropertyResult>(new GetPropertyCommand(trackPath, "name"))).propertyValue[0];
-        var isMidi = !!(await Command.sendCommand<GetPropertyResult>(new GetPropertyCommand(trackPath, "has_midi_input"))).propertyValue[0];
-        var track = new Track(trackPath, trackName, isMidi);
+        var track = await getTrackByIndex(i);
         tracks.push(track);
     }
     return Promise.resolve(tracks);
+}
+
+export async function createMiditrack(trackName: string): Promise<Track> {
+    var trackCount = (await getTracks()).length;
+    var result = await Command.callFunction("live_set", "create_midi_track", [trackCount]);
+
+    return setTrackName(trackCount, trackName);
+}
+
+export async function getTrackByIndex(trackIndex: number): Promise<Track> {
+        var trackPath = `live_set tracks ${trackIndex}`;
+        var trackName = (await Command.getProperty(trackPath, "name")).propertyValue[0];
+        var isMidi = !!(await Command.getProperty(trackPath, "has_midi_input")).propertyValue[0];
+        var track = new Track(trackPath, trackName, isMidi);
+
+        return track;
+}
+
+export async function setTrackName(trackIndex: number, trackName: string): Promise<Track>  {
+    var trackPath = `live_set tracks ${trackIndex}`;
+    await Command.setProperty(trackPath, "name", trackName);
+
+    return getTrackByIndex(trackIndex);
 }

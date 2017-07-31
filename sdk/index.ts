@@ -17,6 +17,8 @@ setInterval(async () => {
     console.log(result, i);
     var trackCount = await API.getTracks();
     console.log(trackCount);
+
+    console.log(await API.createMiditrack("eric is the best"));
     
 }, 2000);
 

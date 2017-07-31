@@ -5,6 +5,11 @@ import { AbletonResult } from "./results/ableton-result";
 import { SetPropertyResult } from "./results/set-property-result";
 import { GetPropertyResult } from "./results/get-property-result";
 import { GetCountResult } from "./results/get-count-result";
+import { SetPropertyCommand } from "./commands/set-property-command";
+import { GetPropertyCommand } from "./commands/get-property-command";
+import { GetCountCommand } from "./commands/get-count-command";
+import { CallFunctionCommand } from "./commands/call-function-command";
+import { CallFunctionResult } from "./results/call-function-result";
 
 var osc = require("osc-min");
 const RESPONSE_ADDRESS = "ableton-js-response";
@@ -26,7 +31,27 @@ class CommandBus {
         this.receiveSocket.on("message", this.receiveMessage);       
     }
 
-    sendCommand<TResult extends AbletonResult>(command: AbletonCommand): Promise<TResult> {
+    setProperty(path: string, propertyName: string, propertValue: any): Promise<SetPropertyResult> {
+        var command = new SetPropertyCommand(path, propertyName, propertValue);
+        return this.sendCommand<SetPropertyResult>(command);
+    }
+
+    getProperty(path: string, propertyName: string): Promise<GetPropertyResult> {
+        var command = new GetPropertyCommand(path, propertyName);
+        return this.sendCommand<GetPropertyResult>(command);
+    }
+
+    getCount(path: string, propertyName: string): Promise<GetCountResult> {
+        var command = new GetCountCommand(path, propertyName);
+        return this.sendCommand<GetCountResult>(command);
+    }
+
+    callFunction(path: string, functionName: string, functionArgs: any[]): Promise<CallFunctionResult> {
+         var command = new CallFunctionCommand(path, functionName, functionArgs);
+        return this.sendCommand<CallFunctionResult>(command);
+    }
+
+    private sendCommand<TResult extends AbletonResult>(command: AbletonCommand): Promise<TResult> {
         return new Promise<TResult>(resolve => {                            
             var buffer = command.toBuffer();
             this.promises[command.id] = resolve;
@@ -47,6 +72,9 @@ class CommandBus {
                 break;
             case CommandType.Count:
                 result = new GetCountResult(response.id, response.count);
+                break;
+            case CommandType.Call:
+                result = new CallFunctionResult(response.id, response.returnValue);
                 break;
             case CommandType.Set:
             default:
