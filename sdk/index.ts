@@ -1,3 +1,6 @@
+// https://docs.cycling74.com/max7/vignettes/jsliveapi
+// https://docs.cycling74.com/max7/vignettes/live_object_model
+// https://docs.cycling74.com/max7/vignettes/jsglobal
 import * as udp from "dgram";
 import { AbletonCommand } from "./commands/ableton-command";
 import { SetPropertyCommand } from "./commands/set-property-command";
