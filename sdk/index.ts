@@ -15,6 +15,8 @@ setInterval(async () => {
     await API.setBpm(i++);
     var result = await API.getBpm();
     console.log(result, i);
+    var trackCount = await API.getTracks();
+    console.log(trackCount);
     
 }, 2000);
 

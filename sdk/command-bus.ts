@@ -4,6 +4,7 @@ import { CommandType } from "./commands/command-type";
 import { AbletonResult } from "./results/ableton-result";
 import { SetPropertyResult } from "./results/set-property-result";
 import { GetPropertyResult } from "./results/get-property-result";
+import { GetCountResult } from "./results/get-count-result";
 
 var osc = require("osc-min");
 const RESPONSE_ADDRESS = "ableton-js-response";
@@ -15,7 +16,7 @@ class CommandBus {
 
     private receiveSocket: udp.Socket;
 
-    promises: { [key: string]: (abletonResult: AbletonResult) => void } = {}
+    promises: { [key: string]: (abletonResult: any) => void } = {}
 
     constructor(sendingPort: number, receivingPort: number) {
         this.port = sendingPort;
@@ -25,8 +26,8 @@ class CommandBus {
         this.receiveSocket.on("message", this.receiveMessage);       
     }
 
-    sendCommand(command: AbletonCommand): Promise<AbletonResult> {
-        return new Promise((resolve) => {                            
+    sendCommand<TResult extends AbletonResult>(command: AbletonCommand): Promise<TResult> {
+        return new Promise<TResult>(resolve => {                            
             var buffer = command.toBuffer();
             this.promises[command.id] = resolve;
             this.sendSocket.send(buffer, 0, buffer.length, this.port, "localhost");    
@@ -43,6 +44,9 @@ class CommandBus {
         switch(commandType) {
             case CommandType.Get:
                 result = new GetPropertyResult(response.id, response.propertyValue);
+                break;
+            case CommandType.Count:
+                result = new GetCountResult(response.id, response.count);
                 break;
             case CommandType.Set:
             default:

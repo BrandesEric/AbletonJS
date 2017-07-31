@@ -37,6 +37,9 @@ function processMessage(path, payload) {
         case "Get":
             getProperty(command);
             break;
+        case "Count":
+            getCount(command);
+            break;
     }
 }
 function setProperty(command) {
@@ -56,5 +59,15 @@ function getProperty(command) {
         id: command.id,
         commandType: command.commandType,
         propertyValue: value
+    }));
+}
+function getCount(command) {
+    var api = new LiveAPI(command.path);
+    var count = api.getcount(command.property);
+    outlet(0, RESPONSE_ADDRESS, JSON.stringify({
+        ok: true,
+        id: command.id,
+        commandType: command.commandType,
+        count: count
     }));
 }
