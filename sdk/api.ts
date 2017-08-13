@@ -59,14 +59,14 @@ export async function getOpenClipSlotIndex(track: Track): Promise<number> {
     var maxClipIndex = (await Ableton.getCount(track.path, "clip_slots")).count;
     for(var i = 0; i < maxClipIndex; i++){
         var hasClip = (await Ableton.getProperty(`${track.path} clip_slots ${i}`, "has_clip")).propertyValue[0];
-        console.log(hasClip);
-
         if(!hasClip) {
             return i;
         }
     }
 
-    return -1;
+    await Ableton.callFunction("live_set", "create_scene", [-1]);
+
+    return i;
 }
 
 export async function insertMidiClip(track: Track, clip: MidiClip): Promise<MidiClip> {
