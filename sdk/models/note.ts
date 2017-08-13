@@ -16,8 +16,8 @@ export class Note {
     toNoteArgumentFormat(): any[] {
         return [
             this.pitch,
-            '' + this.time,
-            '' + this.duration,
+            '' + this.time.toFixed(2),
+            '' + this.duration.toFixed(2),
             this.velocity,
             this.muted ? 1 : 0
         ]

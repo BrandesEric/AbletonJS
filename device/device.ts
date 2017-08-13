@@ -27,6 +27,9 @@ function processMessage(path, payload) {
         case "Call": 
             callFunction(command);
             break;
+        case "MultiCall": 
+            multiCallFunction(command);
+            break;
     }
 }
 
@@ -67,6 +70,27 @@ function callFunction(command) {
     var args = [command.functionName];
     args = args.concat(command.functionArgs);
     var result = api.call.apply(api, args);
+    outlet(0, RESPONSE_ADDRESS, JSON.stringify({
+        ok: true,
+        id: command.id,
+        commandType: command.commandType,
+        returnValue: result
+    }));
+}
+
+function multiCallFunction(command) {
+    log(command.path);
+    var api = new LiveAPI(command.path);
+    var result;
+    for(var i = 0; i < command.functions.length; i++) {
+        var func = command.functions[i];
+        log(func);
+        var args = [func.functionName];
+        log(args);
+        args = args.concat(func.functionArgs); 
+        result = api.call.apply(api, args); 
+    }
+
     outlet(0, RESPONSE_ADDRESS, JSON.stringify({
         ok: true,
         id: command.id,

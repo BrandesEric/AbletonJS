@@ -7,6 +7,7 @@ import { GetCountResult } from "./results/get-count-result";
 import { Track } from "./models/track";
 import { Ableton } from "./ableton-command-bus";
 import { MidiClip } from "./models/midi-clip";
+import { CallFunctionCommand } from "./commands/call-function-command";
 
 
 export async function getBpm(): Promise<number> {
@@ -71,15 +72,17 @@ export async function getOpenClipSlotIndex(track: Track): Promise<number> {
 export async function insertMidiClip(track: Track, clip: MidiClip): Promise<MidiClip> {
     var clipSlotIndex = await getOpenClipSlotIndex(track);
     var clipSlotPath = `${track.path} clip_slots ${clipSlotIndex}`
-    await Ableton.callFunction(clipSlotPath, "create_clip", [''+clip.lengthInBeats]);
     clip.path = `${clipSlotPath} clip`;
-    await Ableton.callFunction(clip.path, "set_notes");
-    await Ableton.callFunction(clip.path, "notes", [clip.notes.length]);
+    await Ableton.callFunction(clipSlotPath, "create_clip", [''+clip.lengthInBeats]);
+    var functions = [
+        new CallFunctionCommand(clip.path, "set_notes"),
+        new CallFunctionCommand(clip.path, "notes", [clip.notes.length]) 
+    ];
     for(var i = 0; i < clip.notes.length; i++) {
         var note = clip.notes[i];
-        await Ableton.callFunction(clip.path, "note", note.toNoteArgumentFormat());
+        functions.push(new CallFunctionCommand(clip.path, "note", note.toNoteArgumentFormat()))
     }
-    await Ableton.callFunction(clip.path, "done");
-
+    functions.push(new CallFunctionCommand(clip.path, "done"));
+    await Ableton.multiCall(clip.path, functions);
     return clip;
 }

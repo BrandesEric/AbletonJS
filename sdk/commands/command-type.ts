@@ -4,5 +4,6 @@ export enum CommandType {
     Get = "Get",
     Count = "Count",
     Goto = "Goto",
-    Call = "Call"
+    Call = "Call",
+    MultiCall = "MultiCall"
 }

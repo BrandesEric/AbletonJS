@@ -10,6 +10,7 @@ import { GetPropertyCommand } from "./commands/get-property-command";
 import { GetCountCommand } from "./commands/get-count-command";
 import { CallFunctionCommand } from "./commands/call-function-command";
 import { CallFunctionResult } from "./results/call-function-result";
+import { MultiCallCommand } from "./commands/multi-call-command";
 
 var osc = require("osc-min");
 const RESPONSE_ADDRESS = "ableton-js-response";
@@ -51,6 +52,11 @@ class AbletonCommandBus {
         return this.sendCommand<CallFunctionResult>(command);
     }
 
+    multiCall(path: string, functions: CallFunctionCommand[]): Promise<CallFunctionResult> {
+        var command = new MultiCallCommand(path, functions);
+        return this.sendCommand<CallFunctionResult>(command);
+    }
+
     private sendCommand<TResult extends AbletonResult>(command: AbletonCommand): Promise<TResult> {
         return new Promise<TResult>(resolve => {                            
             var buffer = command.toBuffer();
@@ -74,6 +80,7 @@ class AbletonCommandBus {
                 result = new GetCountResult(response.id, response.count);
                 break;
             case CommandType.Call:
+            case CommandType.MultiCall:
                 result = new CallFunctionResult(response.id, response.returnValue);
                 break;
             case CommandType.Set:
