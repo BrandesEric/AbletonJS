@@ -39,6 +39,17 @@ export async function createMidiTrack(trackName: string): Promise<Track> {
     return setTrackName(trackCount, trackName);
 }
 
+export async function createMidiTrackIfNotExists(trackName: string): Promise<Track> {
+    var tracks = await getTracks();
+    var indexOf = tracks.findIndex(x => x.name == trackName);
+    if(indexOf >= 0) {
+        return tracks[indexOf];
+    }
+    else {
+        return createMidiTrack(trackName);
+    }
+}
+
 export async function getTrackByIndex(trackIndex: number): Promise<Track> {
         var trackPath = `live_set tracks ${trackIndex}`;
         var trackName = (await Ableton.getProperty(trackPath, "name")).propertyValue[0];

@@ -21,7 +21,7 @@ async function init() {
     clip.lengthInBeats = 8;
     clip.notes = [];
     clip.notes.push(new Note(60, 0, 1))
-    clip.notes.push(new Note(61, 1, 1))
+    clip.notes.push(new Note(61, 1.1, 0.5))
     clip.notes.push(new Note(62, 2, 1))
     clip.notes.push(new Note(63, 3, 1))
     
@@ -32,5 +32,9 @@ async function init() {
 
 }
 
-init();
+//init();
 
+export * from "./api";
+export * from "./models/track";
+export * from "./models/midi-clip";
+export * from "./models/note";
