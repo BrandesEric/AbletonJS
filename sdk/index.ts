@@ -26,9 +26,6 @@ async function init() {
     clip.notes.push(new Note(63, 3, 1))
     
     await API.insertMidiClip(track, clip);
-    
-    
-
 
 }
 

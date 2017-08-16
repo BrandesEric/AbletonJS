@@ -15,7 +15,7 @@ import { MultiCallCommand } from "./commands/multi-call-command";
 var osc = require("osc-min");
 const RESPONSE_ADDRESS = "ableton-js-response";
 
-class AbletonCommandBus {
+export class AbletonCommandBus {
     port: number;
 
     private sendSocket: udp.Socket;
