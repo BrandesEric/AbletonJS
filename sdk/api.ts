@@ -81,10 +81,7 @@ export async function getOpenClipSlotIndex(track: Track): Promise<number> {
 }
 
 export async function insertMidiClip(track: Track, clip: MidiClip): Promise<MidiClip> {
-    var clipSlotIndex = await getOpenClipSlotIndex(track);
-    var clipSlotPath = `${track.path} clip_slots ${clipSlotIndex}`
-    clip.path = `${clipSlotPath} clip`;
-    await Ableton.callFunction(clipSlotPath, "create_clip", [''+clip.lengthInBeats]);
+    clip = await createClip(track, clip);
     var functions = [
         new CallFunctionCommand(clip.path, "set_notes"),
         new CallFunctionCommand(clip.path, "notes", [clip.notes.length]) 
@@ -95,5 +92,17 @@ export async function insertMidiClip(track: Track, clip: MidiClip): Promise<Midi
     }
     functions.push(new CallFunctionCommand(clip.path, "done"));
     await Ableton.multiCall(clip.path, functions);
+    return clip;
+}
+
+export async function createClip(track: Track, clip: MidiClip): Promise<MidiClip> {
+    var clipSlotIndex = await getOpenClipSlotIndex(track);
+    var clipSlotPath = `${track.path} clip_slots ${clipSlotIndex}`
+    clip.path = `${clipSlotPath} clip`;
+    await Ableton.callFunction(clipSlotPath, "create_clip", [''+clip.lengthInBeats]);
+    if(clip.name){
+        await Ableton.setProperty(clip.path, "name", clip.name);
+    }
+
     return clip;
 }

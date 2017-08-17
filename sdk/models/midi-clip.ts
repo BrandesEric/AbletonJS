@@ -4,4 +4,5 @@ export class MidiClip {
     path: string;
     lengthInBeats: number;
     notes: Note[] = [];
+    name: string;
 }
