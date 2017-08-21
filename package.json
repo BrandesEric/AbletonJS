@@ -1,7 +1,7 @@
 {
   "name": "ableton-js",
   "version": "1.0.0",
-  "main": "./sdk/index.ts",
+  "main": "./dist/index.js",
   "scripts": {
     "start": "npm-run-all --parallel device sdk",
     "device": "cd device && tsc --watch",
