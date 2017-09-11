@@ -32,6 +32,11 @@ export async function getTracks(): Promise<Track[]> {
     return tracks;
 }
 
+export async function getTrackByName(trackName: string): Promise<Track|undefined> {
+    var tracks = await getTracks();
+    return tracks.find(x => new RegExp(trackName, "i").test(x.name));
+}
+
 export async function createMidiTrack(trackName: string): Promise<Track> {
     var trackCount = (await getTracks()).length;
     var result = await Ableton.callFunction("live_set", "create_midi_track", [trackCount]);
@@ -105,4 +110,14 @@ export async function createClip(track: Track, clip: MidiClip): Promise<MidiClip
     }
 
     return clip;
+}
+
+export async function deleteAllMidiClips(track: Track): Promise<void> {
+    var maxClipIndex = (await Ableton.getCount(track.path, "clip_slots")).count;
+    for(var i = 0; i < maxClipIndex; i++){
+        var hasClip = (await Ableton.getProperty(`${track.path} clip_slots ${i}`, "has_clip")).propertyValue[0];
+        if(hasClip) {
+           await Ableton.callFunction(`${track.path} clip_slots ${i}`, "delete_clip");
+        }
+    }
 }

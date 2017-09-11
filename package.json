@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/lodash": "^4.14.74",
     "@types/node": "^8.0.15",
     "@types/uuid": "^3.4.0",
     "nodemon": "^1.11.0",
@@ -19,6 +20,7 @@
     "typescript": "^2.4.2"
   },
   "dependencies": {
+    "lodash": "^4.17.4",
     "osc-min": "^1.1.1",
     "uuid": "^3.1.0"
   },
