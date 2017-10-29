@@ -1,0 +1,14 @@
+import { Track } from "./models/track";
+import { MidiClip } from "./models/midi-clip";
+export declare function getBpm(): Promise<number>;
+export declare function setBpm(bpm: number): Promise<void>;
+export declare function getTracks(): Promise<Track[]>;
+export declare function getTrackByName(trackName: string): Promise<Track | undefined>;
+export declare function createMidiTrack(trackName: string): Promise<Track>;
+export declare function createMidiTrackIfNotExists(trackName: string): Promise<Track>;
+export declare function getTrackByIndex(trackIndex: number): Promise<Track>;
+export declare function setTrackName(trackIndex: number, trackName: string): Promise<Track>;
+export declare function getOpenClipSlotIndex(track: Track): Promise<number>;
+export declare function insertMidiClip(track: Track, clip: MidiClip): Promise<MidiClip>;
+export declare function createClip(track: Track, clip: MidiClip): Promise<MidiClip>;
+export declare function deleteAllMidiClips(track: Track): Promise<void>;
