@@ -10,13 +10,13 @@ import { MidiClip } from "./models/midi-clip";
 import { CallFunctionCommand } from "./commands/call-function-command";
 
 
-export async function getBpm(): Promise<number> {
+export async function getTempo(): Promise<number> {
     var result = await Ableton.getProperty("live_set", "tempo");
 
     return result.propertyValue[0];
 }
 
-export async function setBpm(bpm: number): Promise<void> {
+export async function setTempo(bpm: number): Promise<void> {
     await Ableton.setProperty("live_set", "tempo", bpm);
     
     return;

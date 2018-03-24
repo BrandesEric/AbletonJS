@@ -21,12 +21,15 @@ export class AbletonCommandBus {
     private sendSocket: udp.Socket;
 
     private receiveSocket: udp.Socket;
+    
+    private commandTimeoutInMs: number;
 
     promises: { [key: string]: (abletonResult: any) => void } = {}
 
-    constructor(sendingPort: number, receivingPort: number) {
+    constructor(sendingPort: number, receivingPort: number, commandTimeoutInMs: number = 1000) {
         this.port = sendingPort;
         this.sendSocket = udp.createSocket("udp4");
+        this.commandTimeoutInMs = commandTimeoutInMs;
         this.receiveSocket = udp.createSocket('udp4');
         this.receiveSocket.bind(receivingPort);
         this.receiveSocket.on("message", this.receiveMessage);       
@@ -57,11 +60,14 @@ export class AbletonCommandBus {
         return this.sendCommand<CallFunctionResult>(command);
     }
 
-    private sendCommand<TResult extends AbletonResult>(command: AbletonCommand): Promise<TResult> {
-        return new Promise<TResult>(resolve => {                            
+    private sendCommand<TResult extends AbletonResult>(command: AbletonCommand, timeoutInMs = null): Promise<TResult> {
+        return new Promise<TResult>((resolve, reject) => {                            
             var buffer = command.toBuffer();
             this.promises[command.id] = resolve;
-            this.sendSocket.send(buffer, 0, buffer.length, this.port, "localhost");    
+            this.sendSocket.send(buffer, 0, buffer.length, this.port, "localhost");
+            setTimeout(() => {
+                reject(new Error("Command Timeout"));
+            }, timeoutInMs || this.commandTimeoutInMs)     
         });
     }
 

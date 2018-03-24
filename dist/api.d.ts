@@ -1,7 +1,7 @@
 import { Track } from "./models/track";
 import { MidiClip } from "./models/midi-clip";
-export declare function getBpm(): Promise<number>;
-export declare function setBpm(bpm: number): Promise<void>;
+export declare function getTempo(): Promise<number>;
+export declare function setTempo(bpm: number): Promise<void>;
 export declare function getTracks(): Promise<Track[]>;
 export declare function getTrackByName(trackName: string): Promise<Track | undefined>;
 export declare function createMidiTrack(trackName: string): Promise<Track>;

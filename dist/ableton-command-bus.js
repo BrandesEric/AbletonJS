@@ -14,7 +14,7 @@ const multi_call_command_1 = require("./commands/multi-call-command");
 var osc = require("osc-min");
 const RESPONSE_ADDRESS = "ableton-js-response";
 class AbletonCommandBus {
-    constructor(sendingPort, receivingPort) {
+    constructor(sendingPort, receivingPort, commandTimeoutInMs = 1000) {
         this.promises = {};
         this.receiveMessage = (message, other) => {
             var oscMessage = osc.fromBuffer(message);
@@ -45,6 +45,7 @@ class AbletonCommandBus {
         };
         this.port = sendingPort;
         this.sendSocket = udp.createSocket("udp4");
+        this.commandTimeoutInMs = commandTimeoutInMs;
         this.receiveSocket = udp.createSocket('udp4');
         this.receiveSocket.bind(receivingPort);
         this.receiveSocket.on("message", this.receiveMessage);
@@ -69,11 +70,14 @@ class AbletonCommandBus {
         var command = new multi_call_command_1.MultiCallCommand(path, functions);
         return this.sendCommand(command);
     }
-    sendCommand(command) {
-        return new Promise(resolve => {
+    sendCommand(command, timeoutInMs = null) {
+        return new Promise((resolve, reject) => {
             var buffer = command.toBuffer();
             this.promises[command.id] = resolve;
             this.sendSocket.send(buffer, 0, buffer.length, this.port, "localhost");
+            setTimeout(() => {
+                reject(new Error("Command Timeout"));
+            }, timeoutInMs || this.commandTimeoutInMs);
         });
     }
 }

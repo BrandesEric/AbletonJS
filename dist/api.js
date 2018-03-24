@@ -11,20 +11,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const track_1 = require("./models/track");
 const ableton_command_bus_1 = require("./ableton-command-bus");
 const call_function_command_1 = require("./commands/call-function-command");
-function getBpm() {
+function getTempo() {
     return __awaiter(this, void 0, void 0, function* () {
         var result = yield ableton_command_bus_1.Ableton.getProperty("live_set", "tempo");
         return result.propertyValue[0];
     });
 }
-exports.getBpm = getBpm;
-function setBpm(bpm) {
+exports.getTempo = getTempo;
+function setTempo(bpm) {
     return __awaiter(this, void 0, void 0, function* () {
         yield ableton_command_bus_1.Ableton.setProperty("live_set", "tempo", bpm);
         return;
     });
 }
-exports.setBpm = setBpm;
+exports.setTempo = setTempo;
 function getTracks() {
     return __awaiter(this, void 0, void 0, function* () {
         var trackCount = yield ableton_command_bus_1.Ableton.getCount("live_set", "tracks");
