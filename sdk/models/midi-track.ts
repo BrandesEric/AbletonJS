@@ -1,4 +1,4 @@
-export class Track {
+export class MidiTrack {
     path: string;
     name: string;
     isMidi: boolean;

@@ -1,4 +1,4 @@
-export class Note {
+export class MidiNote {
     pitch: number; // the MIDI note of the number, C3 is 60
     time: number; // is the note start time in beats of absolute clip time
     duration: number; // the note length in beats

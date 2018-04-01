@@ -8,9 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const track_1 = require("./models/track");
+const midi_track_1 = require("./models/midi-track");
 const ableton_command_bus_1 = require("./ableton-command-bus");
+const midi_clip_1 = require("./models/midi-clip");
 const call_function_command_1 = require("./commands/call-function-command");
+const midi_note_1 = require("./models/midi-note");
 function getTempo() {
     return __awaiter(this, void 0, void 0, function* () {
         var result = yield ableton_command_bus_1.Ableton.getProperty("live_set", "tempo");
@@ -70,7 +72,7 @@ function getTrackByIndex(trackIndex) {
         var trackPath = `live_set tracks ${trackIndex}`;
         var trackName = (yield ableton_command_bus_1.Ableton.getProperty(trackPath, "name")).propertyValue[0];
         var isMidi = !!(yield ableton_command_bus_1.Ableton.getProperty(trackPath, "has_midi_input")).propertyValue[0];
-        var track = new track_1.Track(trackPath, trackName, isMidi);
+        var track = new midi_track_1.MidiTrack(trackPath, trackName, isMidi);
         return track;
     });
 }
@@ -139,3 +141,49 @@ function deleteAllMidiClips(track) {
     });
 }
 exports.deleteAllMidiClips = deleteAllMidiClips;
+function getMidiClips(track) {
+    return __awaiter(this, void 0, void 0, function* () {
+        var clips = [];
+        var maxClipIndex = (yield ableton_command_bus_1.Ableton.getCount(track.path, "clip_slots")).count;
+        for (var i = 0; i < maxClipIndex; i++) {
+            var hasClip = (yield ableton_command_bus_1.Ableton.getProperty(`${track.path} clip_slots ${i}`, "has_clip")).propertyValue[0];
+            if (hasClip) {
+                var path = `${track.path} clip_slots ${i} clip`;
+                var lengthInBeats = (yield ableton_command_bus_1.Ableton.getProperty(path, "length")).propertyValue[0];
+                var name = (yield ableton_command_bus_1.Ableton.getProperty(path, "name")).propertyValue[0];
+                var clip = new midi_clip_1.MidiClip();
+                clip.path = path;
+                clip.name = name;
+                clip.lengthInBeats = lengthInBeats;
+                clips.push(clip);
+            }
+        }
+        return clips;
+    });
+}
+exports.getMidiClips = getMidiClips;
+function getMidiClipNotes(clip) {
+    return __awaiter(this, void 0, void 0, function* () {
+        var result = (yield ableton_command_bus_1.Ableton.callFunction(clip.path, "get_notes", [0, 0, clip.lengthInBeats, 128])).returnValue;
+        var i = 0;
+        var notes = [];
+        while (i < result.length) {
+            var val = result[i];
+            if (val === "note") {
+                var pitch = result[i + 1];
+                var time = result[i + 2];
+                var duration = result[i + 3];
+                var velocity = result[i + 4];
+                var muted = !!result[i + 5];
+                var note = new midi_note_1.MidiNote(pitch, time, duration, velocity, muted);
+                notes.push(note);
+                i += 6;
+            }
+            else {
+                i++;
+            }
+        }
+        return notes;
+    });
+}
+exports.getMidiClipNotes = getMidiClipNotes;

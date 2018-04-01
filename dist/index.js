@@ -16,7 +16,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // https://docs.cycling74.com/max7/vignettes/jsglobal
 const API = require("./api");
 const midi_clip_1 = require("./models/midi-clip");
-const note_1 = require("./models/note");
+const midi_note_1 = require("./models/midi-note");
 function init() {
     return __awaiter(this, void 0, void 0, function* () {
         var tracks = yield API.getTracks();
@@ -31,15 +31,25 @@ function init() {
         var clip = new midi_clip_1.MidiClip();
         clip.lengthInBeats = 8;
         clip.notes = [];
-        clip.notes.push(new note_1.Note(60, 0, 1));
-        clip.notes.push(new note_1.Note(61, 1.1, 0.5));
-        clip.notes.push(new note_1.Note(62, 2, 1));
-        clip.notes.push(new note_1.Note(63, 3, 1));
+        clip.notes.push(new midi_note_1.MidiNote(60, 0, 1));
+        clip.notes.push(new midi_note_1.MidiNote(61, 1.1, 0.5));
+        clip.notes.push(new midi_note_1.MidiNote(62, 2, 1));
+        clip.notes.push(new midi_note_1.MidiNote(63, 3, 1));
         yield API.insertMidiClip(track, clip);
     });
 }
 //init();
+function doSomething() {
+    return __awaiter(this, void 0, void 0, function* () {
+        var tracks = yield API.getTracks();
+        var track = tracks[1];
+        var clips = yield API.getMidiClips(track);
+        var notes = yield API.getMidiClipNotes(clips[0]);
+        console.log(notes);
+    });
+}
+doSomething();
 __export(require("./api"));
-__export(require("./models/track"));
+__export(require("./models/midi-track"));
 __export(require("./models/midi-clip"));
-__export(require("./models/note"));
+__export(require("./models/midi-note"));
