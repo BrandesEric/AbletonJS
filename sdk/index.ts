@@ -38,7 +38,7 @@ async function doSomething(){
     var notes = await API.getMidiClipNotes(clips[0]);
     console.log(notes);
 }
-doSomething();
+//doSomething();
 
 export * from "./api";
 export * from "./models/midi-track";
