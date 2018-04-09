@@ -18,6 +18,7 @@ export declare class AbletonCommandBus {
     getCount(path: string, propertyName: string): Promise<GetCountResult>;
     callFunction(path: string, functionName: string, functionArgs?: any[]): Promise<CallFunctionResult>;
     multiCall(path: string, functions: CallFunctionCommand[]): Promise<CallFunctionResult>;
+    getLiveApiProperty(path: string, propertyName: string): Promise<GetPropertyResult>;
     private sendCommand<TResult>(command, timeoutInMs?);
     receiveMessage: (message: Buffer, other: any) => void;
 }

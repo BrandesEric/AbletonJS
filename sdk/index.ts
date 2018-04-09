@@ -32,13 +32,15 @@ async function init() {
 //init();
 
 async function doSomething(){
-    var tracks = await API.getTracks();
-    var track = tracks[1];
-    var clips = await API.getMidiClips(track);
-    var notes = await API.getMidiClipNotes(clips[0]);
-    console.log(notes);
+    // var tracks = await API.getTracks();
+    // var track = tracks[1];
+    // var clips = await API.getMidiClips(track);
+    // var notes = await API.getMidiClipNotes(clips[0]);
+    // console.log(notes);
+    var clip = await API.getSelectedMidiClip();
+    console.log(clip);
 }
-//doSomething();
+doSomething();
 
 export * from "./api";
 export * from "./models/midi-track";

@@ -9,4 +9,5 @@ var CommandType;
     CommandType["Goto"] = "Goto";
     CommandType["Call"] = "Call";
     CommandType["MultiCall"] = "MultiCall";
+    CommandType["LiveApiProperty"] = "LiveApiProperty";
 })(CommandType = exports.CommandType || (exports.CommandType = {}));

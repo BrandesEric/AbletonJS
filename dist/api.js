@@ -148,13 +148,7 @@ function getMidiClips(track) {
         for (var i = 0; i < maxClipIndex; i++) {
             var hasClip = (yield ableton_command_bus_1.Ableton.getProperty(`${track.path} clip_slots ${i}`, "has_clip")).propertyValue[0];
             if (hasClip) {
-                var path = `${track.path} clip_slots ${i} clip`;
-                var lengthInBeats = (yield ableton_command_bus_1.Ableton.getProperty(path, "length")).propertyValue[0];
-                var name = (yield ableton_command_bus_1.Ableton.getProperty(path, "name")).propertyValue[0];
-                var clip = new midi_clip_1.MidiClip();
-                clip.path = path;
-                clip.name = name;
-                clip.lengthInBeats = lengthInBeats;
+                var clip = yield getMidiClip(track, i);
                 clips.push(clip);
             }
         }
@@ -162,6 +156,30 @@ function getMidiClips(track) {
     });
 }
 exports.getMidiClips = getMidiClips;
+function getMidiClip(track, clipSlotIndex) {
+    return __awaiter(this, void 0, void 0, function* () {
+        var path = `${track.path} clip_slots ${clipSlotIndex} clip`;
+        var lengthInBeats = (yield ableton_command_bus_1.Ableton.getProperty(path, "length")).propertyValue[0];
+        var name = (yield ableton_command_bus_1.Ableton.getProperty(path, "name")).propertyValue[0];
+        var clip = new midi_clip_1.MidiClip();
+        clip.path = path;
+        clip.name = name;
+        clip.lengthInBeats = lengthInBeats;
+        return clip;
+    });
+}
+exports.getMidiClip = getMidiClip;
+function getSelectedMidiClip() {
+    return __awaiter(this, void 0, void 0, function* () {
+        var id = (yield ableton_command_bus_1.Ableton.getProperty("live_set view", "highlighted_clip_slot")).propertyValue[1];
+        var clipSlotPath = (yield ableton_command_bus_1.Ableton.getLiveApiProperty(`id ${id}`, "path")).propertyValue;
+        clipSlotPath = clipSlotPath.replace(/\"/gi, ''); // clean out extra quotes from Ableton. 
+        var pathParts = clipSlotPath.split(" ");
+        var track = yield getTrackByIndex(pathParts[2]);
+        return yield getMidiClip(track, pathParts[4]);
+    });
+}
+exports.getSelectedMidiClip = getSelectedMidiClip;
 function getMidiClipNotes(clip) {
     return __awaiter(this, void 0, void 0, function* () {
         var result = (yield ableton_command_bus_1.Ableton.callFunction(clip.path, "get_notes", [0, 0, clip.lengthInBeats, 128])).returnValue;

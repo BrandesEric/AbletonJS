@@ -41,14 +41,16 @@ function init() {
 //init();
 function doSomething() {
     return __awaiter(this, void 0, void 0, function* () {
-        var tracks = yield API.getTracks();
-        var track = tracks[1];
-        var clips = yield API.getMidiClips(track);
-        var notes = yield API.getMidiClipNotes(clips[0]);
-        console.log(notes);
+        // var tracks = await API.getTracks();
+        // var track = tracks[1];
+        // var clips = await API.getMidiClips(track);
+        // var notes = await API.getMidiClipNotes(clips[0]);
+        // console.log(notes);
+        var clip = yield API.getSelectedMidiClip();
+        console.log(clip);
     });
 }
-//doSomething();
+doSomething();
 __export(require("./api"));
 __export(require("./models/midi-track"));
 __export(require("./models/midi-clip"));

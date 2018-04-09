@@ -129,18 +129,33 @@ export async function getMidiClips(track: MidiTrack): Promise<MidiClip[]> {
     for(var i = 0; i < maxClipIndex; i++){
         var hasClip = (await Ableton.getProperty(`${track.path} clip_slots ${i}`, "has_clip")).propertyValue[0];
         if(hasClip) {
-            var path = `${track.path} clip_slots ${i} clip`;
-            var lengthInBeats = (await Ableton.getProperty(path, "length")).propertyValue[0];
-            var name = (await Ableton.getProperty(path, "name")).propertyValue[0];
-            var clip = new MidiClip();
-            clip.path = path;
-            clip.name = name;
-            clip.lengthInBeats = lengthInBeats;
+            var clip = await getMidiClip(track, i);
             clips.push(clip);
         }
     }
 
     return clips;
+}
+
+export async function getMidiClip(track: MidiTrack, clipSlotIndex: number) {
+    var path = `${track.path} clip_slots ${clipSlotIndex} clip`;
+    var lengthInBeats = (await Ableton.getProperty(path, "length")).propertyValue[0];
+    var name = (await Ableton.getProperty(path, "name")).propertyValue[0];
+    var clip = new MidiClip();
+    clip.path = path;
+    clip.name = name;
+    clip.lengthInBeats = lengthInBeats;
+    return clip;
+}
+
+export async function getSelectedMidiClip(): Promise<MidiClip> {
+    var id = (await Ableton.getProperty("live_set view", "highlighted_clip_slot")).propertyValue[1];
+    var clipSlotPath = (await Ableton.getLiveApiProperty(`id ${id}`, "path")).propertyValue;
+    clipSlotPath = clipSlotPath.replace(/\"/gi, ''); // clean out extra quotes from Ableton. 
+    var pathParts = clipSlotPath.split(" ");
+    var track = await getTrackByIndex(pathParts[2]);
+
+    return await getMidiClip(track, pathParts[4]);
 }
 
 export async function getMidiClipNotes(clip: MidiClip): Promise<MidiNote[]> {

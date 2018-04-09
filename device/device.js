@@ -46,6 +46,9 @@ function processMessage(path, payload) {
         case "MultiCall":
             multiCallFunction(command);
             break;
+        case "LiveApiProperty":
+            liveApiProperty(command);
+            break;
     }
 }
 function setProperty(command) {
@@ -106,5 +109,15 @@ function multiCallFunction(command) {
         id: command.id,
         commandType: command.commandType,
         returnValue: result
+    }));
+}
+function liveApiProperty(command) {
+    var api = new LiveAPI(command.path);
+    var value = api[command.property];
+    outlet(0, RESPONSE_ADDRESS, JSON.stringify({
+        ok: true,
+        id: command.id,
+        commandType: command.commandType,
+        propertyValue: value
     }));
 }

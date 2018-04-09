@@ -11,6 +11,7 @@ const get_count_command_1 = require("./commands/get-count-command");
 const call_function_command_1 = require("./commands/call-function-command");
 const call_function_result_1 = require("./results/call-function-result");
 const multi_call_command_1 = require("./commands/multi-call-command");
+const live_api_property_command_1 = require("./commands/live-api-property-command");
 var osc = require("osc-min");
 const RESPONSE_ADDRESS = "ableton-js-response";
 class AbletonCommandBus {
@@ -26,6 +27,7 @@ class AbletonCommandBus {
             var result;
             switch (commandType) {
                 case command_type_1.CommandType.Get:
+                case command_type_1.CommandType.LiveApiProperty:
                     result = new get_property_result_1.GetPropertyResult(response.id, response.propertyValue);
                     break;
                 case command_type_1.CommandType.Count:
@@ -68,6 +70,10 @@ class AbletonCommandBus {
     }
     multiCall(path, functions) {
         var command = new multi_call_command_1.MultiCallCommand(path, functions);
+        return this.sendCommand(command);
+    }
+    getLiveApiProperty(path, propertyName) {
+        var command = new live_api_property_command_1.LiveApiPropertyCommand(path, propertyName);
         return this.sendCommand(command);
     }
     sendCommand(command, timeoutInMs = null) {

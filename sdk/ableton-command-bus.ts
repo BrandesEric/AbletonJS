@@ -11,6 +11,7 @@ import { GetCountCommand } from "./commands/get-count-command";
 import { CallFunctionCommand } from "./commands/call-function-command";
 import { CallFunctionResult } from "./results/call-function-result";
 import { MultiCallCommand } from "./commands/multi-call-command";
+import { LiveApiPropertyCommand } from "./commands/live-api-property-command";
 
 var osc = require("osc-min");
 const RESPONSE_ADDRESS = "ableton-js-response";
@@ -60,6 +61,11 @@ export class AbletonCommandBus {
         return this.sendCommand<CallFunctionResult>(command);
     }
 
+    getLiveApiProperty(path: string, propertyName: string): Promise<GetPropertyResult> {
+        var command = new LiveApiPropertyCommand(path, propertyName);
+        return this.sendCommand<GetPropertyResult>(command);
+    }
+
     private sendCommand<TResult extends AbletonResult>(command: AbletonCommand, timeoutInMs = null): Promise<TResult> {
         return new Promise<TResult>((resolve, reject) => {                            
             var buffer = command.toBuffer();
@@ -80,6 +86,7 @@ export class AbletonCommandBus {
         var result: AbletonResult;
         switch(commandType) {
             case CommandType.Get:
+            case CommandType.LiveApiProperty:
                 result = new GetPropertyResult(response.id, response.propertyValue);
                 break;
             case CommandType.Count:

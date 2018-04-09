@@ -14,4 +14,6 @@ export declare function insertMidiClip(track: MidiTrack, clip: MidiClip): Promis
 export declare function createClip(track: MidiTrack, clip: MidiClip): Promise<MidiClip>;
 export declare function deleteAllMidiClips(track: MidiTrack): Promise<void>;
 export declare function getMidiClips(track: MidiTrack): Promise<MidiClip[]>;
+export declare function getMidiClip(track: MidiTrack, clipSlotIndex: number): Promise<MidiClip>;
+export declare function getSelectedMidiClip(): Promise<MidiClip>;
 export declare function getMidiClipNotes(clip: MidiClip): Promise<MidiNote[]>;

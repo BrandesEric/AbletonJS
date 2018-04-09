@@ -5,5 +5,6 @@ export enum CommandType {
     Count = "Count",
     Goto = "Goto",
     Call = "Call",
-    MultiCall = "MultiCall"
+    MultiCall = "MultiCall",
+    LiveApiProperty = "LiveApiProperty"
 }
