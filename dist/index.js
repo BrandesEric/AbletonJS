@@ -50,7 +50,7 @@ function doSomething() {
         console.log(clip);
     });
 }
-doSomething();
+//doSomething();
 __export(require("./api"));
 __export(require("./models/midi-track"));
 __export(require("./models/midi-clip"));

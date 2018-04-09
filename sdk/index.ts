@@ -40,7 +40,7 @@ async function doSomething(){
     var clip = await API.getSelectedMidiClip();
     console.log(clip);
 }
-doSomething();
+//doSomething();
 
 export * from "./api";
 export * from "./models/midi-track";
