@@ -72,7 +72,7 @@ function getTrackByIndex(trackIndex) {
         var trackPath = `live_set tracks ${trackIndex}`;
         var trackName = (yield ableton_command_bus_1.Ableton.getProperty(trackPath, "name")).propertyValue[0];
         var isMidi = !!(yield ableton_command_bus_1.Ableton.getProperty(trackPath, "has_midi_input")).propertyValue[0];
-        var track = new midi_track_1.MidiTrack(trackPath, trackName, isMidi);
+        var track = new midi_track_1.MidiTrack(trackPath, trackName, isMidi, trackIndex);
         return track;
     });
 }
@@ -85,6 +85,16 @@ function setTrackName(trackIndex, trackName) {
     });
 }
 exports.setTrackName = setTrackName;
+function deleteTrackByName(trackName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        var track = yield getTrackByName(trackName);
+        if (track) {
+            yield ableton_command_bus_1.Ableton.callFunction("live_set", "delete_track", [track.index], 5000);
+        }
+        return;
+    });
+}
+exports.deleteTrackByName = deleteTrackByName;
 function getOpenClipSlotIndex(track) {
     return __awaiter(this, void 0, void 0, function* () {
         var maxClipIndex = (yield ableton_command_bus_1.Ableton.getCount(track.path, "clip_slots")).count;

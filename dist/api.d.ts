@@ -9,6 +9,7 @@ export declare function createMidiTrack(trackName: string): Promise<MidiTrack>;
 export declare function createMidiTrackIfNotExists(trackName: string): Promise<MidiTrack>;
 export declare function getTrackByIndex(trackIndex: number): Promise<MidiTrack>;
 export declare function setTrackName(trackIndex: number, trackName: string): Promise<MidiTrack>;
+export declare function deleteTrackByName(trackName: string): Promise<any>;
 export declare function getOpenClipSlotIndex(track: MidiTrack): Promise<number>;
 export declare function insertMidiClip(track: MidiTrack, clip: MidiClip): Promise<MidiClip>;
 export declare function createClip(track: MidiTrack, clip: MidiClip): Promise<MidiClip>;

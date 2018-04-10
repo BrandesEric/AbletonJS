@@ -60,7 +60,7 @@ export async function getTrackByIndex(trackIndex: number): Promise<MidiTrack> {
         var trackPath = `live_set tracks ${trackIndex}`;
         var trackName = (await Ableton.getProperty(trackPath, "name")).propertyValue[0];
         var isMidi = !!(await Ableton.getProperty(trackPath, "has_midi_input")).propertyValue[0];
-        var track = new MidiTrack(trackPath, trackName, isMidi);
+        var track = new MidiTrack(trackPath, trackName, isMidi, trackIndex);
 
         return track;
 }
@@ -70,6 +70,15 @@ export async function setTrackName(trackIndex: number, trackName: string): Promi
     await Ableton.setProperty(trackPath, "name", trackName);
 
     return getTrackByIndex(trackIndex);
+}
+
+export async function deleteTrackByName(trackName: string): Promise<any> {
+    var track = await getTrackByName(trackName);
+    if(track) {
+        await Ableton.callFunction("live_set", "delete_track", [track.index], 5000)
+    }
+
+    return;
 }
 
 export async function getOpenClipSlotIndex(track: MidiTrack): Promise<number> {

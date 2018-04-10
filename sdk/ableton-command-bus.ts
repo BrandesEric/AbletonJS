@@ -27,7 +27,7 @@ export class AbletonCommandBus {
 
     promises: { [key: string]: (abletonResult: any) => void } = {}
 
-    constructor(sendingPort: number, receivingPort: number, commandTimeoutInMs: number = 1000) {
+    constructor(sendingPort: number, receivingPort: number, commandTimeoutInMs: number = 2000) {
         this.port = sendingPort;
         this.sendSocket = udp.createSocket("udp4");
         this.commandTimeoutInMs = commandTimeoutInMs;
@@ -51,9 +51,9 @@ export class AbletonCommandBus {
         return this.sendCommand<GetCountResult>(command);
     }
 
-    callFunction(path: string, functionName: string, functionArgs: any[] = []): Promise<CallFunctionResult> {
-         var command = new CallFunctionCommand(path, functionName, functionArgs);
-        return this.sendCommand<CallFunctionResult>(command);
+    callFunction(path: string, functionName: string, functionArgs: any[] = [], timeoutInMs = this.commandTimeoutInMs): Promise<CallFunctionResult> {
+        var command = new CallFunctionCommand(path, functionName, functionArgs);
+        return this.sendCommand<CallFunctionResult>(command, timeoutInMs);
     }
 
     multiCall(path: string, functions: CallFunctionCommand[]): Promise<CallFunctionResult> {
@@ -66,7 +66,7 @@ export class AbletonCommandBus {
         return this.sendCommand<GetPropertyResult>(command);
     }
 
-    private sendCommand<TResult extends AbletonResult>(command: AbletonCommand, timeoutInMs = null): Promise<TResult> {
+    private sendCommand<TResult extends AbletonResult>(command: AbletonCommand, timeoutInMs?: number): Promise<TResult> {
         return new Promise<TResult>((resolve, reject) => {                            
             var buffer = command.toBuffer();
             this.promises[command.id] = resolve;

@@ -15,7 +15,7 @@ const live_api_property_command_1 = require("./commands/live-api-property-comman
 var osc = require("osc-min");
 const RESPONSE_ADDRESS = "ableton-js-response";
 class AbletonCommandBus {
-    constructor(sendingPort, receivingPort, commandTimeoutInMs = 1000) {
+    constructor(sendingPort, receivingPort, commandTimeoutInMs = 2000) {
         this.promises = {};
         this.receiveMessage = (message, other) => {
             var oscMessage = osc.fromBuffer(message);
@@ -64,9 +64,9 @@ class AbletonCommandBus {
         var command = new get_count_command_1.GetCountCommand(path, propertyName);
         return this.sendCommand(command);
     }
-    callFunction(path, functionName, functionArgs = []) {
+    callFunction(path, functionName, functionArgs = [], timeoutInMs = this.commandTimeoutInMs) {
         var command = new call_function_command_1.CallFunctionCommand(path, functionName, functionArgs);
-        return this.sendCommand(command);
+        return this.sendCommand(command, timeoutInMs);
     }
     multiCall(path, functions) {
         var command = new multi_call_command_1.MultiCallCommand(path, functions);
@@ -76,7 +76,7 @@ class AbletonCommandBus {
         var command = new live_api_property_command_1.LiveApiPropertyCommand(path, propertyName);
         return this.sendCommand(command);
     }
-    sendCommand(command, timeoutInMs = null) {
+    sendCommand(command, timeoutInMs) {
         return new Promise((resolve, reject) => {
             var buffer = command.toBuffer();
             this.promises[command.id] = resolve;

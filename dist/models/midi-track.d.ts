@@ -3,5 +3,6 @@ export declare class MidiTrack {
     name: string;
     isMidi: boolean;
     isAudio: boolean;
-    constructor(path: string, name: string, isMidi: boolean);
+    index: number;
+    constructor(path: string, name: string, isMidi: boolean, index: number);
 }
